@@ -7,6 +7,8 @@ if (isset($_POST['createItem'])) {
     $description = $_POST['description'];
     $price = $_POST['price'];
     $categoryId = $_POST['categoryId'];
+    $stock = $_POST['stock'];
+    $discount = $_POST['discount'];
 
     if (isset($_FILES["image"]) && $_FILES["image"]["error"] === UPLOAD_ERR_OK) {
         $file_extension = pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
@@ -15,9 +17,9 @@ if (isset($_POST['createItem'])) {
         $upload_path = "../../img/" . $db_image_path;
         
         if (move_uploaded_file($_FILES["image"]["tmp_name"], $upload_path)) {
-            $sql = "INSERT INTO `products` (`productName`, `productDesc`, `productPrice`, `productCategorieId`, `image`) VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO `products` (`productName`, `productDesc`, `productPrice`, `productCategorieId`, `image`, `stock`, `discount`) VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssdis", $name, $description, $price, $categoryId, $db_image_path);
+            $stmt->bind_param("ssdisid", $name, $description, $price, $categoryId, $db_image_path, $stock, $discount);
 
             if ($stmt->execute()) {
                 echo "<script>alert('Item created successfully.'); window.location=document.referrer;</script>";
@@ -39,6 +41,8 @@ if (isset($_POST['updateItem'])) {
     $description = $_POST['desc'];
     $price = $_POST['price'];
     $categoryId = $_POST['categoryId'];
+    $stock = $_POST['stock'];
+    $discount = $_POST['discount'];
 
     // First get the current image filename
     $oldImageQuery = "SELECT image FROM products WHERE productId = ?";
@@ -50,8 +54,10 @@ if (isset($_POST['updateItem'])) {
     $oldImage = $row['image'];
     $stmt->close();
 
+    $new_filename = $oldImage; // Default to keeping old image
+
+    // Only process image if one was uploaded
     if (isset($_FILES["image"]) && $_FILES["image"]["error"] === UPLOAD_ERR_OK) {
-        // Upload new image
         $file_extension = pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
         $new_filename = uniqid() . '.' . $file_extension;
         $db_image_path = "products/" . $new_filename;
@@ -62,18 +68,18 @@ if (isset($_POST['updateItem'])) {
             if ($oldImage && file_exists("../../img/" . $oldImage)) {
                 unlink("../../img/" . $oldImage);
             }
-            $new_filename = $db_image_path; // Store the relative path
+            $new_filename = $db_image_path;
         } else {
-            $new_filename = $oldImage; // Keep old image if upload fails
+            echo "<script>alert('Failed to upload new image. Using existing image.'); </script>";
+            $new_filename = $oldImage;
         }
-    } else {
-        $new_filename = $oldImage; // Keep old image if no new image
     }
 
     // Update product details
-    $updateSql = "UPDATE `products` SET `productName`=?, `productDesc`=?, `productPrice`=?, `productCategorieId`=?, `image`=? WHERE `productId`=?";
+    $updateSql = "UPDATE `products` SET `productName`=?, `productDesc`=?, `productPrice`=?, 
+                  `productCategorieId`=?, `image`=?, `stock`=?, `discount`=? WHERE `productId`=?";
     $updateStmt = $conn->prepare($updateSql);
-    $updateStmt->bind_param("ssdssi", $name, $description, $price, $categoryId, $new_filename, $productId);
+    $updateStmt->bind_param("ssdisidi", $name, $description, $price, $categoryId, $new_filename, $stock, $discount, $productId);
 
     if ($updateStmt->execute()) {
         echo "<script>alert('Item updated successfully.'); window.location=document.referrer;</script>";

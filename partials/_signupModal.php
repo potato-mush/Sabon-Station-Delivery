@@ -1,4 +1,4 @@
-  <!-- Sign up Modal -->
+<!-- Sign up Modal -->
     <div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="signupModal" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -35,6 +35,20 @@
                     <span class="input-group-text" id="basic-addon">+91</span>
                   </div>
                   <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter Your Phone Number" required pattern="[0-9]{10}" maxlength="10">
+                </div>
+              </div>
+              <div class="form-group">
+                <b><label for="address">Street Address:</label></b>
+                <input type="text" class="form-control" id="address" name="address" placeholder="Enter Your Street Address" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <b><label for="city">City:</label></b>
+                  <input type="text" class="form-control" id="city" name="city" placeholder="Enter Your City" required>
+                </div>
+                <div class="form-group col-md-6">
+                  <b><label for="zipcode">ZIP Code:</label></b>
+                  <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="Enter ZIP Code" required pattern="[0-9]{4}" maxlength="4">
                 </div>
               </div>
               <div class="text-left my-2">

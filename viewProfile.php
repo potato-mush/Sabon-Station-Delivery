@@ -260,6 +260,20 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] != true) {
                                     </div>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <b><label for="address-edit">Street Address:</label></b>
+                                <input type="text" class="form-control" id="address-edit" name="address" placeholder="Enter Your Street Address" required value="<?php echo $row['address'] ?>">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <b><label for="city-edit">City:</label></b>
+                                    <input type="text" class="form-control" id="city-edit" name="city" placeholder="Enter Your City" required value="<?php echo $row['city'] ?>">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <b><label for="zipcode-edit">ZIP Code:</label></b>
+                                    <input type="text" class="form-control" id="zipcode-edit" name="zipcode" placeholder="Enter ZIP Code" required pattern="[0-9]{4}" maxlength="4" value="<?php echo $row['zipcode'] ?>">
+                                </div>
+                            </div>
                             <button type="submit" name="updateProfileDetail" class="btn btn-primary btn-block">Update Profile</button>
                         </form>
                     </div>

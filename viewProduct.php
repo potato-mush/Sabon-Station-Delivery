@@ -31,7 +31,15 @@
             $productPrice = $row['productPrice'];
             $productDesc = $row['productDesc'];
             $productCategorieId = $row['productCategorieId'];
-            $productImage = $row['image']; // Get image path from database
+            $productStock = $row['stock'];
+            $productDiscount = $row['discount'];
+            $productImage = $row['image'];
+
+            // Calculate discounted price if there's a discount
+            $finalPrice = $productPrice;
+            if ($productDiscount > 0) {
+                $finalPrice = $productPrice - ($productPrice * ($productDiscount / 100));
+            }
         ?>
         <script> document.getElementById("title").innerHTML = "<?php echo $productName; ?>"; </script> 
         <?php
@@ -39,26 +47,39 @@
                 <img src="img/' . $productImage . '" width="249px" height="262px">
             </div>
             <div class="col-md-8 my-4">
-                <h3>' . $productName . '</h3>
-                <h5 style="color: green">₱ '.$productPrice. '/-</h5>
-                <p class="mb-0">' .$productDesc .'</p>';
+                <h3>' . $productName . '</h3>';
+                
+        if ($productDiscount > 0) {
+            echo '<h5><s style="color: red">₱' . $productPrice . '/-</s></h5>
+                  <h5 style="color: green">₱' . number_format($finalPrice, 2) . '/- (' . $productDiscount . '% OFF)</h5>';
+        } else {
+            echo '<h5 style="color: green">₱' . $productPrice . '/-</h5>';
+        }
+                
+        echo '<p class="mb-0">' .$productDesc .'</p>';
 
-                if($loggedin){
-                    $quaSql = "SELECT `itemQuantity` FROM `viewcart` WHERE productId = '$productId' AND `userId`='$userId'";
-                    $quaresult = mysqli_query($conn, $quaSql);
-                    $quaExistRows = mysqli_num_rows($quaresult);
-                    if($quaExistRows == 0) {
-                        echo '<form action="partials/_manageCart.php" method="POST">
-                              <input type="hidden" name="itemId" value="'.$productId. '">
-                              <button type="submit" name="addToCart" class="btn btn-primary my-2">Add to Cart</button>';
-                    }else {
-                        echo '<a href="viewCart.php"><button class="btn btn-primary my-2">Go to Cart</button></a>';
-                    }
+        if ($productStock == 0) {
+            echo '<p class="text-danger font-weight-bold mt-2">Out of Stock</p>';
+            echo '<button class="btn btn-secondary my-2" disabled>Add to Cart</button>';
+        } else {
+            echo '<p class="text-success mt-2">Stock: ' . $productStock . '</p>';
+            if($loggedin){
+                $quaSql = "SELECT `itemQuantity` FROM `viewcart` WHERE productId = '$productId' AND `userId`='$userId'";
+                $quaresult = mysqli_query($conn, $quaSql);
+                $quaExistRows = mysqli_num_rows($quaresult);
+                if($quaExistRows == 0) {
+                    echo '<form action="partials/_manageCart.php" method="POST">
+                          <input type="hidden" name="itemId" value="'.$productId. '">
+                          <button type="submit" name="addToCart" class="btn btn-primary my-2">Add to Cart</button>';
+                }else {
+                    echo '<a href="viewCart.php"><button class="btn btn-primary my-2">Go to Cart</button></a>';
                 }
-                else{
-                    echo '<button class="btn btn-primary my-2" data-toggle="modal" data-target="#loginModal">Add to Cart</button>';
-                }
-                echo '</form>
+            }
+            else{
+                echo '<button class="btn btn-primary my-2" data-toggle="modal" data-target="#loginModal">Add to Cart</button>';
+            }
+        }
+        echo '</form>
                 <h6 class="my-1"> View </h6>
                 <div class="mx-4">
                     <a href="viewProductList.php?catid=' . $productCategorieId . '" class="active text-dark">

@@ -10,6 +10,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $phone = $_POST["phone"];
     $password = $_POST["password"];
     $cpassword = $_POST["cpassword"];
+    $address = $_POST["address"];
+    $city = $_POST["city"];
+    $zipcode = $_POST["zipcode"];
+
     // Check whether this username exists
     $existSql = "SELECT * FROM `users` WHERE username = '$username'";
     $result = mysqli_query($conn, $existSql);
@@ -19,20 +23,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         header("Location: ../index.php?signupsuccess=false&error=$showError");
     }
     else{
-      if(($password == $cpassword)){
-          $hash = password_hash($password, PASSWORD_DEFAULT);
-          $sql = "INSERT INTO `users` ( `username`, `firstName`, `lastName`, `email`, `phone`, `password`, `joinDate`) VALUES ('$username', '$firstName', '$lastName', '$email', '$phone', '$hash', current_timestamp())";   
-          $result = mysqli_query($conn, $sql);
-          if ($result){
-              $showAlert = true;
-              header("Location: ../index.php?signupsuccess=true");
-          }
-      }
-      else{
-          $showError = "Passwords do not match";
-          header("Location: ../index.php?signupsuccess=false&error=$showError");
-      }
+        if(($password == $cpassword)){
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $sql = "INSERT INTO `users` (`username`, `firstName`, `lastName`, `email`, `phone`, `password`, `address`, `city`, `zipcode`, `joinDate`) 
+                    VALUES ('$username', '$firstName', '$lastName', '$email', '$phone', '$hash', '$address', '$city', '$zipcode', current_timestamp())";   
+            $result = mysqli_query($conn, $sql);
+            if ($result){
+                $showAlert = true;
+                header("Location: ../index.php?signupsuccess=true");
+            }
+        }
+        else{
+            $showError = "Passwords do not match";
+            header("Location: ../index.php?signupsuccess=false&error=$showError");
+        }
     }
 }
-    
 ?>

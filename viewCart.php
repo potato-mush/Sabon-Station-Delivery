@@ -63,18 +63,43 @@
                                     $myrow = mysqli_fetch_assoc($myresult);
                                     $productName = $myrow['productName'];
                                     $productPrice = $myrow['productPrice'];
-                                    $total = $productPrice * $Quantity;
+                                    $productDiscount = $myrow['discount'];
+                                    $productStock = $myrow['stock'];
+
+                                    // Calculate discounted price
+                                    $finalPrice = $productPrice;
+                                    if ($productDiscount > 0) {
+                                        $finalPrice = $productPrice - ($productPrice * ($productDiscount / 100));
+                                    }
+                                    
+                                    $total = $finalPrice * $Quantity;
                                     $counter++;
                                     $totalPrice = $totalPrice + $total;
 
                                     echo '<tr>
                                             <td>' . $counter . '</td>
                                             <td>' . $productName . '</td>
-                                            <td>' . $productPrice . '</td>
+                                            <td>';
+                                    if ($productDiscount > 0) {
+                                        echo '<s class="text-muted">₱' . $productPrice . '</s><br>
+                                              <span class="text-success">₱' . number_format($finalPrice, 2) . '</span>
+                                              <small class="text-muted">(' . $productDiscount . '% OFF)</small>';
+                                    } else {
+                                        echo '₱' . number_format($productPrice, 2);
+                                    }
+                                    echo '</td>
                                             <td>
                                                 <form id="frm' . $productId . '">
                                                     <input type="hidden" name="productId" value="' . $productId . '">
-                                                    <input type="number" name="quantity" value="' . $Quantity . '" class="text-center" onchange="updateCart(' . $productId . ')" onkeyup="return false" style="width:60px" min=1 oninput="check(this)" onClick="this.select();">
+                                                    <input type="number" name="quantity" value="' . $Quantity . '" class="text-center" 
+                                                    onchange="updateCart(' . $productId . ')" 
+                                                    onkeyup="return false" 
+                                                    style="width:60px" 
+                                                    min="1" 
+                                                    max="' . $productStock . '" 
+                                                    oninput="checkStock(this, ' . $productStock . ')" 
+                                                    onClick="this.select();">
+                                                    <div class="small text-muted">Max: ' . $productStock . '</div>
                                                 </form>
                                             </td>
                                             <td>' . $total . '</td>
@@ -173,12 +198,43 @@
             $.ajax({
                 url: 'partials/_manageCart.php',
                 type: 'POST',
-                data:$("#frm"+id).serialize(),
-                success:function(res) {
-                    location.reload();
-                } 
-            })
+                data: $("#frm"+id).serialize(),
+                success: function(response) {
+                    let result = JSON.parse(response);
+                    if(result.error) {
+                        alert(result.error);
+                        location.reload();
+                    } else if(result.success) {
+                        location.reload();
+                    }
+                }
+            });
         }
+
+        function checkStock(input, maxStock) {
+            if (input.value > maxStock) {
+                input.value = maxStock;
+                alert('Cannot exceed available stock of ' + maxStock + ' units');
+            }
+            if (input.value <= 0) {
+                input.value = 1;
+            }
+            // Trigger cart update when stock is checked
+            let formId = input.closest('form').id;
+            let productId = formId.replace('frm', '');
+            updateCart(productId);
+        }
+
+        // Add event listeners to quantity inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            let quantityInputs = document.querySelectorAll('input[name="quantity"]');
+            quantityInputs.forEach(function(input) {
+                input.addEventListener('change', function() {
+                    let maxStock = this.getAttribute('max');
+                    checkStock(this, maxStock);
+                });
+            });
+        });
     </script>
 </body>
 </html>

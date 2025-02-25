@@ -46,6 +46,14 @@
                                         $itemrow = mysqli_fetch_assoc($itemresult);
                                         $productName = $itemrow['productName'];
                                         $productPrice = $itemrow['productPrice'];
+                                        $productDiscount = $itemrow['discount'];
+                                        
+                                        // Calculate discounted price
+                                        $finalPrice = $productPrice;
+                                        if ($productDiscount > 0) {
+                                            $finalPrice = $productPrice - ($productPrice * ($productDiscount / 100));
+                                        }
+
                                         $productDesc = $itemrow['productDesc'];
                                         $productCategorieId = $itemrow['productCategorieId'];
                                         $productImage = $itemrow['image']; // Get image path
@@ -55,8 +63,17 @@
                                                     <div class="p-2">
                                                     <img src="img/' . $productImage . '" alt="' . $productName . '" width="70" class="img-fluid rounded shadow-sm">
                                                     <div class="ml-3 d-inline-block align-middle">
-                                                        <h5 class="mb-0"> <a href="#" class="text-dark d-inline-block align-middle">'.$productName. '</a></h5><span class="text-muted font-weight-normal font-italic d-block">₱ ' .$productPrice. '/-</span>
-                                                    </div>
+                                                        <h5 class="mb-0"> <a href="#" class="text-dark d-inline-block align-middle">'.$productName. '</a></h5>';
+                                        if ($productDiscount > 0) {
+                                            echo '<span class="text-muted font-weight-normal font-italic d-block">
+                                                    <s>₱' . $productPrice . '/-</s>
+                                                    <span class="text-success">₱' . number_format($finalPrice, 2) . '/-</span>
+                                                    <small>(' . $productDiscount . '% OFF)</small>
+                                                  </span>';
+                                        } else {
+                                            echo '<span class="text-muted font-weight-normal font-italic d-block">₱' . number_format($productPrice, 2) . '/-</span>';
+                                        }
+                                        echo '</div>
                                                     </div>
                                                 </th>
                                                 <td class="align-middle text-center"><strong>' .$itemQuantity. '</strong></td>

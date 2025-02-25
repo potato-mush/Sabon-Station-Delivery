@@ -47,3 +47,32 @@
         </div>
     </div>
 </div>
+
+<?php 
+    if($loggedin){
+        // Check stock availability for all cart items
+        $stockError = false;
+        $errorMessage = '';
+        
+        $cartSql = "SELECT p.productId, p.productName, p.stock, vc.itemQuantity 
+                    FROM viewcart vc 
+                    JOIN products p ON vc.productId = p.productId 
+                    WHERE vc.userId='$userId'";
+        $cartResult = mysqli_query($conn, $cartSql);
+        
+        while($row = mysqli_fetch_assoc($cartResult)) {
+            if($row['itemQuantity'] > $row['stock']) {
+                $stockError = true;
+                $errorMessage .= $row['productName'] . ' has only ' . $row['stock'] . ' items available.\n';
+            }
+        }
+        
+        if($stockError) {
+            echo '<script>
+                    alert("Stock availability has changed:\n' . $errorMessage . '\nPlease update your cart.");
+                    window.location.href="viewCart.php";
+                  </script>';
+            exit();
+        }
+    }
+?>

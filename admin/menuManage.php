@@ -4,7 +4,7 @@
 			<!-- FORM Panel -->
 			<div class="col-md-4">
 				<form action="partials/_menuManage.php" method="post" enctype="multipart/form-data">
-					<div class="card mb-3">
+					<div class="card mb=3">
 						<div class="card-header" style="background-color: rgb(111, 202, 203);">
 							Create New Item
 						</div>
@@ -28,6 +28,14 @@
 							<div class="form-group">
 								<label class="control-label">Price</label>
 								<input type="number" class="form-control" name="price" required min="1">
+							</div>
+							<div class="form-group">
+								<label class="control-label">Stock</label>
+								<input type="number" class="form-control" name="stock" required min="0">
+							</div>
+							<div class="form-group">
+								<label class="control-label">Discount (%)</label>
+								<input type="number" class="form-control" name="discount" required min="0" max="100" value="0">
 							</div>
 							<div class="form-group">
 								<label class="control-label">Category: </label>
@@ -99,8 +107,15 @@
 											<td>
 												<p>Name: <b>' . htmlspecialchars($productName) . '</b></p>
 												<p>Description: <b class="truncate">' . htmlspecialchars($productDesc) . '</b></p>
-												<p>Price: <b>' . htmlspecialchars($productPrice) . '</b></p>
-												<p>Category: <b>' . htmlspecialchars($categoryName) . '</b></p> <!-- Display category name -->
+												<p>Price: <b>' . htmlspecialchars($productPrice) . '</b></p>';
+												
+								if ($row['discount'] > 0) {
+									$discountedPrice = $productPrice - ($productPrice * ($row['discount'] / 100));
+									echo '<p>Discounted Price: <b>' . number_format($discountedPrice, 2) . ' (' . $row['discount'] . '% OFF)</b></p>';
+								}
+								
+								echo '<p>Stock: <b>' . htmlspecialchars($row['stock']) . '</b></p>
+									  <p>Category: <b>' . htmlspecialchars($categoryName) . '</b></p>
 											</td>
 											<td class="text-center">
 												<div class="row mx-auto" style="width: 112px">
@@ -154,46 +169,51 @@ while ($productRow = mysqli_fetch_assoc($productResult)) {
 						<div class="text-left my-2 row" style="border-bottom: 2px solid #dee2e6;">
 							<div class="form-group col-md-12 text-center">
 								<div class="form-group text-center">
-									<input type="file" name="image" id="itemImage<?php echo $productId; ?>" accept=".jpg" style="display: none;" required
+									<input type="file" name="image" id="itemImage<?php echo $productId; ?>" accept=".jpg" style="display: none;"
 										onchange="document.getElementById('itemPhoto<?php echo $productId; ?>').src = window.URL.createObjectURL(this.files[0])">
 									<img id="itemPhoto<?php echo $productId; ?>" src="../img/<?php echo $productRow['image']; ?>" alt="Item image"
 										style="border-radius: 50%; width: 120px; height: 120px; cursor: pointer; margin-top: 10px;"
 										onclick="document.getElementById('itemImage<?php echo $productId; ?>').click();">
-									<small class="form-text text-muted mx-3">Choose an image file.</small>
+									<small class="form-text text-muted mx-3">Click to change image (optional)</small>
 								</div>
-							</div>
-							<div class="form-group col-md-4">
-								<!-- Leave empty, as the image is displayed above -->
 							</div>
 						</div>
 						<div class="text-left my-2">
 							<b><label for="name">Name</label></b>
-							<input class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($productName); ?>" type="text" required>
+							<input class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($productRow['productName']); ?>" type="text" required>
 						</div>
 						<div class="text-left my-2 row">
-							<div class="form-group col-md-6">
+							<div class="form-group col-md-4">
 								<b><label for="price">Price</label></b>
-								<input class="form-control" id="price" name="price" value="<?php echo htmlspecialchars($productPrice); ?>" type="number" min="1" required>
+								<input class="form-control" id="price" name="price" value="<?php echo htmlspecialchars($productRow['productPrice']); ?>" type="number" min="1" required>
 							</div>
-							<div class="form-group col-md-6">
-								<b><label for="categoryId">Category</label></b>
-								<select name="categoryId" id="categoryId" class="form-control" required>
-									<?php
-									$catsql = "SELECT * FROM `categories`";
-									$catresult = mysqli_query($conn, $catsql);
-									while ($row = mysqli_fetch_assoc($catresult)) {
-										$catId = $row['categorieId'];
-										$catName = $row['categorieName'];
-										$selected = ($catId == $productCategorieId) ? 'selected' : '';
-										echo '<option value="' . $catId . '" ' . $selected . '>' . htmlspecialchars($catName) . '</option>';
-									}
-									?>
-								</select>
+							<div class="form-group col-md-4">
+								<b><label for="stock">Stock</label></b>
+								<input class="form-control" id="stock" name="stock" value="<?php echo htmlspecialchars($productRow['stock']); ?>" type="number" min="0" required>
+							</div>
+							<div class="form-group col-md-4">
+								<b><label for="discount">Discount (%)</label></b>
+								<input class="form-control" id="discount" name="discount" value="<?php echo htmlspecialchars($productRow['discount']); ?>" type="number" min="0" max="100" required>
 							</div>
 						</div>
 						<div class="text-left my-2">
 							<b><label for="desc">Description</label></b>
-							<textarea class="form-control" id="desc" name="desc" rows="2" required minlength="6"><?php echo htmlspecialchars($productDesc); ?></textarea>
+							<textarea class="form-control" id="desc" name="desc" rows="2" required minlength="6"><?php echo htmlspecialchars($productRow['productDesc']); ?></textarea>
+						</div>
+						<div class="text-left my-2">
+							<b><label for="categoryId">Category</label></b>
+							<select name="categoryId" id="categoryId" class="form-control" required>
+								<?php
+								$catsql = "SELECT * FROM `categories`";
+								$catresult = mysqli_query($conn, $catsql);
+								while($row = mysqli_fetch_assoc($catresult)) {
+									$catId = $row['categorieId'];
+									$catName = $row['categorieName'];
+									$selected = ($catId == $productRow['productCategorieId']) ? 'selected' : '';
+									echo '<option value="'.$catId.'" '.$selected.'>'.$catName.'</option>';
+								}
+								?>
+							</select>
 						</div>
 						<button type="submit" class="btn btn-success" name="updateItem">Update</button>
 						<input type="hidden" name="productId" value="<?php echo $productId; ?>">

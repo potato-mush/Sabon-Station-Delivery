@@ -9,6 +9,9 @@
         $email = $_POST["email"];
         $phone = $_POST["phone"];
         $password = $_POST["password-edit"];
+        $address = $_POST["address"];
+        $city = $_POST["city"];
+        $zipcode = $_POST["zipcode"];
 
         // Get raw password from database for comparison
         $passSql = "SELECT password FROM users WHERE id='$userId'"; 
@@ -17,8 +20,10 @@
         
         // Direct comparison since password is already hashed in database
         if ($passRow['password-edit'] === $password) {
-            // Update profile details
-            $sql = "UPDATE users SET firstName='$firstName', lastName='$lastName', email='$email', phone='$phone' WHERE id='$userId'";
+            // Update profile details including address
+            $sql = "UPDATE users SET firstName='$firstName', lastName='$lastName', email='$email', 
+                    phone='$phone', address='$address', city='$city', zipcode='$zipcode' 
+                    WHERE id='$userId'";
             $result = mysqli_query($conn, $sql);
             
             // Handle image upload if present
