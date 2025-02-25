@@ -93,6 +93,21 @@ echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
           <button type="button" class="btn btn-success mx-2"  data-toggle="modal" data-target="#signupModal">SignUp</button>';
         }
             
+  echo '<ul class="navbar-nav mr-2">';
+  if($loggedin) {
+      echo '<li class="nav-item dropdown">
+              <a class="nav-link" href="#" id="notification" role="button" data-toggle="dropdown">
+                  <i class="fas fa-bell"></i>
+                  <span class="badge badge-danger" id="notificationCount" style="position: relative; top: -10px;"></span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
+                  <div class="dropdown-header"><h6>Notifications</h6></div>
+                  <div class="dropdown-divider"></div>
+                  <div id="notificationList"></div>
+              </div>
+          </li>';
+  }
+  echo '</ul>';
   echo '</div>
     </nav>';
 

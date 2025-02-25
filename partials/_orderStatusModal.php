@@ -163,6 +163,21 @@ while ($statusmodalrow = mysqli_fetch_assoc($statusmodalresult)) {
         $deliveryTime = 'xx';
     }
 
+    if($status != $statusmodalrow['orderStatus']) {
+        $sql = "INSERT INTO notifications (userId, orderId, message) 
+                VALUES ($userId, $orderid, 'Your order #$orderid status has been updated to: $status')";
+        mysqli_query($conn, $sql);
+    }
+
+    if($status != $statusmodalrow['orderStatus']) {
+        // Insert notification
+        $message = "Order #" . $orderid . " status updated to: " . $tstatus;
+        $insertSql = "INSERT INTO notifications (userId, orderId, message, status) VALUES (?, ?, ?, 0)";
+        $stmt = $conn->prepare($insertSql);
+        $stmt->bind_param("iis", $userId, $orderid, $message);
+        $stmt->execute();
+    }
+
 ?>
     <!-- Modal -->
     <div class="modal fade" id="orderStatus<?php echo $orderid; ?>" tabindex="-1" role="dialog" aria-labelledby="orderStatus<?php echo $orderid; ?>" aria-hidden="true">

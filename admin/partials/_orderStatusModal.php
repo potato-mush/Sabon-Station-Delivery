@@ -20,16 +20,21 @@ while ($itemModalRow = mysqli_fetch_assoc($itemModalResult)) {
       <div class="modal-body">
         <form action="partials/_orderManage.php" method="post" style="border-bottom: 2px solid #dee2e6;">
             <div class="text-left my-2">    
-                <b><label for="name">Order Status</label></b>
+                <b><label for="status">Order Status</label></b>
                 <div class="row mx-2">
-                <input class="form-control col-md-3" id="status" name="status" value="<?php echo $orderStatus; ?>" type="number" min="0" max="6" required>    
-                <button type="button" class="btn btn-secondary ml-1" data-container="body" data-toggle="popover" title="User Types" data-placement="bottom" data-html="true" data-content="0=Order Placed.<br> 1=Order Confirmed.<br> 2=Preparing your Order.<br> 3=Your order is on the way!<br> 4=Order Delivered.<br> 5=Order Denied.<br> 6=Order Cancelled.">
-                    <i class="fas fa-info"></i>
-                </button>
+                    <select class="form-control col-md-3" id="status" name="status" required>
+                        <option value="0" <?php if($orderStatus == 0) echo "selected"; ?>>Order Placed</option>
+                        <option value="1" <?php if($orderStatus == 1) echo "selected"; ?>>Order Confirmed</option>
+                        <option value="2" <?php if($orderStatus == 2) echo "selected"; ?>>Preparing Order</option>
+                        <option value="3" <?php if($orderStatus == 3) echo "selected"; ?>>On the way</option>
+                        <option value="4" <?php if($orderStatus == 4) echo "selected"; ?>>Delivered</option>
+                        <option value="5" <?php if($orderStatus == 5) echo "selected"; ?>>Denied</option>
+                        <option value="6" <?php if($orderStatus == 6) echo "selected"; ?>>Cancelled</option>
+                    </select>
                 </div>
             </div>
-            <input type="hidden" id="orderId" name="orderId" value="<?php echo $orderid; ?>">
-            <button type="submit" class="btn btn-success mb-2" name="updateStatus">Update</button>
+            <input type="hidden" name="orderId" value="<?php echo $orderid; ?>">
+            <button type="submit" class="btn btn-success" name="updateStatus">Update Status</button>
         </form>
 
         <?php 

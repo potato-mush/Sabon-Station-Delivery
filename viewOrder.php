@@ -9,6 +9,18 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        // Configure toastr notification options
+        toastr.options = {
+            "closeButton": true,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "5000"
+        };
+    </script>
     <title>Your Order</title>
     <link rel = "icon" href ="img/logo.jpg" type = "image/x-icon">
 <style>
@@ -220,7 +232,8 @@
     <?php 
     include 'partials/_orderItemModal.php';
     include 'partials/_orderStatusModal.php';
-    require 'partials/_footer.php';?> 
+    require 'partials/_footer.php';
+    ?> 
     
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -228,5 +241,82 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>         
     <script src="https://unpkg.com/bootstrap-show-password@1.2.1/dist/bootstrap-show-password.min.js"></script>
-  </body>
+
+    <script>
+    function checkNewNotifications() {
+        if(typeof userId === 'undefined') return;
+        
+        $.ajax({
+            url: 'partials/fetch_notifications.php',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                if(data.error) return;
+
+                // Update notification count
+                if(data.unreadCount > 0) {
+                    $('#notificationCount').text(data.unreadCount).show();
+                    
+                    // Play notification sound for new notifications
+                    let audio = new Audio('notification.mp3');
+                    audio.play();
+                    
+                    // Show toast notifications for unread messages
+                    data.notifications.forEach(notification => {
+                        if(notification.status === 0) {
+                            toastr.info(notification.message, 'Order Update', {
+                                timeOut: 5000,
+                                closeButton: true,
+                                progressBar: true
+                            });
+                        }
+                    });
+                } else {
+                    $('#notificationCount').hide();
+                }
+                
+                // Update dropdown list
+                const notificationList = $('#notificationList');
+                notificationList.empty();
+                
+                if(data.notifications.length === 0) {
+                    notificationList.append('<div class="dropdown-item text-center">No notifications</div>');
+                } else {
+                    data.notifications.forEach(notification => {
+                        const notificationClass = notification.status == 0 ? 'bg-light' : '';
+                        notificationList.append(`
+                            <div class="dropdown-item ${notificationClass}">
+                                <small class="text-muted d-block">${notification.timestamp}</small>
+                                <p class="mb-0">${notification.message}</p>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                        `);
+                    });
+                }
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        // Initial check
+        checkNewNotifications();
+        
+        // Check every 10 seconds
+        setInterval(checkNewNotifications, 10000);
+        
+        // Mark as read when dropdown is opened
+        $('#notification').on('show.bs.dropdown', function() {
+            $.ajax({
+                url: 'partials/fetch_notifications.php',
+                type: 'POST',
+                data: {markRead: true},
+                success: function() {
+                    checkNewNotifications();
+                }
+            });
+        });
+    });
+    </script>
+
+</body>
 </html>
