@@ -38,7 +38,7 @@
             <div class="carousel-background"><img src="assets/img/slide/slide-1.jpg" alt=""></div>
             <div class="carousel-container">
               <div class="carousel-content">
-                <h2 class="animate__animated animate__fadeInDown">Welcome to <span>product World</span></h2>
+                <h2 class="animate__animated animate__fadeInDown">Welcome to <span>Sabon Station</span></h2>
                 <a href="index.php" class="btn-get-started animate__animated animate__fadeInUp scrollto">Get Started</a>
               </div>
             </div>
@@ -49,7 +49,7 @@
             <div class="carousel-container">
               <div class="carousel-content">
                 <h2 class="animate__animated animate__fadeInDown mb-0">Our Mission</h2>
-                <p class="animate__animated animate__fadeInUp">To be number one</p>
+                <p class="animate__animated animate__fadeInUp">We are committed in building a long-term relationship with our partners and customers by bringing the best quality and affordable household cleaning and home care products to the heart of Filipino communities.</p>
                 <a href="index.php" class="btn-get-started animate__animated animate__fadeInUp scrollto">Get Started</a>
               </div>
             </div>
@@ -59,8 +59,9 @@
             <div class="carousel-background"><img src="assets/img/slide/slide-3.jpg" alt=""></div>
             <div class="carousel-container">
               <div class="carousel-content">
-                <h2 class="animate__animated animate__fadeInDown mb-0">Parmar Darshan Kiritbhai</h2><p>CE084 <a href="https://github.com/darshankparmar" target="_blank">@darshankparmar</a></p>
-                <a href="index.php" class="btn-get-started animate__animated animate__fadeInUp scrollto">Get Started</a>
+              <h2 class="animate__animated animate__fadeInDown mb-0">Our Vision</h2>
+              <p class="animate__animated animate__fadeInUp">We are continuously improving to be recognized as the country’s leading and most trusted local manufacturer of household cleaning and home care products.</p>
+              <a href="index.php" class="btn-get-started animate__animated animate__fadeInUp scrollto">Get Started</a>
               </div>
             </div>
           </div>
@@ -92,51 +93,52 @@
 
         <div class="row">
           <div class="col-lg-6">
-            <h3>Welcome to <strong>product World</strong></h3>
-            <h3><strong>The Worldwide Leader in product Delivery</strong></h3>
-            <p class="font-italic">
+            <div class="about-img">
+              <img src="img/about-image.jpg" class="img-fluid rounded" alt="About Sabon Station">
+            </div>
           </div>
           <div class="col-lg-6 pt-4 pt-lg-0 content">
-            <div class="skills-content">
-              <p><b>Rating: </b></p>
-              <div class="progress">
-                <span class="skill">5 star <i class="val">93%</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="93" aria-valuemin="0" aria-valuemax="100"></div>
+            <h3>Sabon Station: Creating Clean Spaces and Happy Homes</h3>
+            <p class="font-italic">
+              Since our establishment, Sabon Station has been a cornerstone in providing premium quality household cleaning and care products across the Philippines.
+            </p>
+            <p>
+              At Sabon Station, we understand that a clean home is a happy home. Our products are carefully formulated to deliver optimal cleaning power while remaining gentle on surfaces and fabrics. We combine traditional cleaning wisdom with modern innovation to create solutions that truly work.
+            </p>
+            
+            <div class="row mt-4">
+              <div class="col-md-6">
+                <div class="icon-box">
+                  <i class="icofont-check-circled"></i>
+                  <h4>Quality First</h4>
+                  <p>We never compromise on the quality of our ingredients and formulations</p>
                 </div>
               </div>
-
-              <div class="progress">
-                <span class="skill">4 star <i class="val">90%</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+              <div class="col-md-6">
+                <div class="icon-box">
+                  <i class="icofont-earth"></i>
+                  <h4>Eco-Friendly</h4>
+                  <p>Committed to sustainable practices and environmentally conscious products</p>
                 </div>
               </div>
-
-              <div class="progress">
-                <span class="skill">3 star <i class="val">30%</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+              <div class="col-md-6">
+                <div class="icon-box">
+                  <i class="icofont-heart"></i>
+                  <h4>Customer-Centric</h4>
+                  <p>Designed with Filipino families' needs and preferences in mind</p>
                 </div>
               </div>
-
-              <div class="progress">
-                <span class="skill">2 star <i class="val">5%</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="5" aria-valuemin="0" aria-valuemax="100"></div>
+              <div class="col-md-6">
+                <div class="icon-box">
+                  <i class="icofont-award"></i>
+                  <h4>Value for Money</h4>
+                  <p>Premium quality products at prices that won't break your budget</p>
                 </div>
               </div>
-
-              <div class="progress">
-                <span class="skill">1 star <i class="val">0%</i></span>
-                <div class="progress-bar-wrap">
-                  <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-              </div>
-
             </div>
           </div>
         </div>
+
       </div>
     </section><!-- End About Us Section -->
 
@@ -145,11 +147,33 @@
       <div class="container">
 
         <div class="row no-gutters">
+          <?php 
+            // Get happy customers (unique users who ordered)
+            $sql = "SELECT COUNT(DISTINCT userId) as customer_count FROM orders";
+            $result = mysqli_query($conn, $sql);
+            $row = mysqli_fetch_assoc($result);
+            $customerCount = $row['customer_count'];
+            
+            // Get number of products
+            $sql = "SELECT COUNT(*) as product_count FROM products";
+            $result = mysqli_query($conn, $sql);
+            $row = mysqli_fetch_assoc($result);
+            $productCount = $row['product_count'];
+            
+            // Get number of fulfilled orders (status 4 = delivered)
+            $sql = "SELECT COUNT(*) as order_count FROM orders WHERE orderStatus='4'";
+            $result = mysqli_query($conn, $sql);
+            $row = mysqli_fetch_assoc($result);
+            $orderCount = $row['order_count'];
+            
+            // For team members, we'll use a hardcoded value since it's likely not in DB
+            $teamCount = 3;
+          ?>
 
           <div class="col-lg-3 col-md-6 d-md-flex align-items-md-stretch">
             <div class="count-box">
               <i class="icofont-simple-smile"></i>
-              <span data-toggle="counter-up">232</span>
+              <span data-toggle="counter-up"><?php echo $customerCount; ?></span>
               <p><strong>Happy Customers</strong></p>
             </div>
           </div>
@@ -157,24 +181,24 @@
           <div class="col-lg-3 col-md-6 d-md-flex align-items-md-stretch">
             <div class="count-box">
               <i class="icofont-document-folder"></i>
-              <span data-toggle="counter-up">121</span>
-              <p><strong>Items</strong></p>
+              <span data-toggle="counter-up"><?php echo $productCount; ?></span>
+              <p><strong>Products</strong></p>
             </div>
           </div>
 
           <div class="col-lg-3 col-md-6 d-md-flex align-items-md-stretch">
             <div class="count-box">
-              <i class="icofont-live-support"></i>
-              <span data-toggle="counter-up">1,463</span>
-              <p><strong>Hours Of Support</strong></p>
+              <i class="icofont-delivery-time"></i>
+              <span data-toggle="counter-up"><?php echo $orderCount; ?></span>
+              <p><strong>Orders Fulfilled</strong></p>
             </div>
           </div>
 
           <div class="col-lg-3 col-md-6 d-md-flex align-items-md-stretch">
             <div class="count-box">
               <i class="icofont-users-alt-5"></i>
-              <span data-toggle="counter-up">15</span>
-              <p><strong>Hard Workers</strong></p>
+              <span data-toggle="counter-up"><?php echo $teamCount; ?></span>
+              <p><strong>Team Members</strong></p>
             </div>
           </div>
 
@@ -183,67 +207,6 @@
       </div>
     </section><!-- End Counts Section -->
 
-    <!-- ======= Our Team Section ======= -->
-    <section id="team" class="team">
-      <div class="container">
-
-        <div class="section-title">
-          <h2>Our Team</h2>
-        </div>
-
-        <div class="row" style="padding-left: 228px;">
-
-          <div class="col-xl-3 col-lg-4 col-md-6" data-wow-delay="0.1s">
-            <div class="member">
-              <img src="assets/img/team/team-1.jpg" class="img-fluid" alt="">
-              <div class="member-info">
-                <div class="member-info-content">
-                  <h4>Darshan Parmar</h4>
-                </div>
-                <div class="social">
-                  <a href="https://twitter.com/darshankparmar" target="_blank"><i class="icofont-twitter"></i></a>
-                  <a href="https://github.com/darshankparmar" target="_blank"><i class="fab fa-github"></i></a>
-                  <a href="https://www.linkedin.com/in/darshankparmar/" target="_blank"><i class="icofont-linkedin" target="_blank"></i></a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-xl-3 col-lg-4 col-md-6" data-wow-delay="0.2s">
-            <div class="member">
-              <img src="assets/img/team/team-3.jpg" class="img-fluid" alt="">
-              <div class="member-info">
-                <div class="member-info-content">
-                  <h4>Harsh Patel</h4>
-                </div>
-                <div class="social">
-                  <a href=""><i class="icofont-twitter" target="_blank"></i></a>
-                  <a href="https://github.com/7Har" target="_blank"><i class="fab fa-github"></i></a>
-                  <a href=""><i class="icofont-linkedin" target="_blank"></i></a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-xl-3 col-lg-4 col-md-6" data-wow-delay="0.2s">
-            <div class="member">
-              <img src="assets/img/team/team-5.jpg" class="img-fluid" alt="" style="height: 198px;width: 198px;">
-              <div class="member-info">
-                <div class="member-info-content">
-                  <h4>Bhavesh Parmar</h4>
-                </div>
-                <div class="social">
-                  <a href=""><i class="icofont-twitter" target="_blank"></i></a>
-                  <a href="https://github.com/Blparmar007" target="_blank"><i class="fab fa-github"></i></a>
-                  <a href=""><i class="icofont-linkedin" target="_blank"></i></a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section><!-- End Our Team Section -->
   </main>
 
   <?php include 'partials/_footer.php';?> 

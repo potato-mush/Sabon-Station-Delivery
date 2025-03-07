@@ -14,10 +14,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $_SESSION['loggedin'] = true;
             $_SESSION['username'] = $username;
             $_SESSION['userId'] = $row['id'];
-            header("location: /SabonStationDelivery-main/Original/index.php?loginsuccess=true");
+            header("location: ../index.php?loginsuccess=true");
             exit();
         } 
     }
-    header("location: /SabonStationDelivery-main/Original/index.php?loginsuccess=false");
+    header("location: ../index.php?loginsuccess=false");
 }
 ?>

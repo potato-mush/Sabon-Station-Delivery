@@ -346,5 +346,153 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>         
     <script src="https://unpkg.com/bootstrap-show-password@1.2.1/dist/bootstrap-show-password.min.js"></script>
+      <!-- Chat Support Script -->
+  <script>
+    (function() {
+      const chatWidget = document.createElement("div");
+      chatWidget.id = "chat-widget";
+      Object.assign(chatWidget.style, {
+        position: "fixed",
+        bottom: "20px",
+        right: "20px",
+        width: "350px",
+        height: "520px",
+        border: "1px solid #ccc",
+        borderRadius: "10px",
+        boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+        backgroundColor: "#fff",
+        display: "none",
+        fontFamily: "Arial, sans-serif",
+      });
+      chatWidget.innerHTML = `
+      <div style="padding: 10px; background-color: #007bff; color: #fff; border-radius: 10px 10px 0 0;">
+        Customer Support
+        <button id="close-chat" style="float: right; background: none; border: none; color: #fff; font-size: 18px;">&times;</button>
+      </div>
+      <div id="chat-content" style="padding: 10px; height: 400px; overflow-y: auto;"></div>
+      <div style="padding: 10px; border-top: 1px solid #ccc; display: flex;">
+        <input type="text" id="chat-input" placeholder="Type a message..." style="flex-grow: 1; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+        <button id="send-button" style="margin-left: 10px; padding: 10px 20px; background-color: #007bff; color: #fff; border: none; border-radius: 5px;">Send</button>
+      </div>
+    `;
+      document.body.appendChild(chatWidget);
+
+      const chatTrigger = document.createElement("button");
+      chatTrigger.id = "chat-trigger";
+      Object.assign(chatTrigger.style, {
+        position: "fixed",
+        bottom: "20px",
+        right: "20px",
+        width: "50px",
+        height: "50px",
+        borderRadius: "50%",
+        backgroundColor: "#007bff",
+        color: "#fff",
+        border: "none",
+        fontSize: "20px",
+        cursor: "pointer",
+        boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+      });
+      chatTrigger.innerHTML = "💬";
+      document.body.appendChild(chatTrigger);
+
+      const chatInput = document.getElementById("chat-input");
+      const chatContent = document.getElementById("chat-content");
+      const closeChat = document.getElementById("close-chat");
+      const sendButton = document.getElementById("send-button");
+
+      chatTrigger.addEventListener("click", () => {
+        chatWidget.style.display = "block";
+        chatTrigger.style.display = "none";
+      });
+
+      closeChat.addEventListener("click", () => {
+        chatWidget.style.display = "none";
+        chatTrigger.style.display = "block";
+      });
+
+      function sendMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        chatContent.innerHTML += `<div style='text-align: right;'><span style='background-color: #007bff; color: #fff; padding: 5px 10px; margin: 15px 4px; border-radius: 10px; display: inline-block; max-width: 80%; word-wrap: break-word;'>${message}</span></div>`;
+        chatInput.value = "";
+        chatContent.scrollTop = chatContent.scrollHeight;
+
+        // Add typing indicator
+        const typingIndicatorId = 'typing-' + Date.now();
+        chatContent.innerHTML += `<div id="${typingIndicatorId}" style='text-align: left;'><span style='background-color: #f1f1f1; padding: 5px 10px; margin: 15px 4px; border-radius: 10px; display: inline-block;'>Typing...</span></div>`;
+        chatContent.scrollTop = chatContent.scrollHeight;
+
+        fetch("chat.php", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              message
+            })
+          })
+          .then(res => {
+            if (!res.ok) {
+              throw new Error(`HTTP error! Status: ${res.status}`);
+            }
+            return res.json();
+          })
+          .then(data => {
+            // Remove typing indicator
+            document.getElementById(typingIndicatorId).remove();
+            
+            if (data.error) {
+              chatContent.innerHTML += `<div style='text-align: left;'><span style='background-color: #f1f1f1; padding: 5px 10px; border-radius: 10px; color: red; display: inline-block; max-width: 80%; word-wrap: break-word;'>Error: ${data.error}</span></div>`;
+            } else {
+              // Create a container for the HTML content
+              const responseContainer = document.createElement('div');
+              responseContainer.style.textAlign = 'left';
+              
+              const responseSpan = document.createElement('span');
+              responseSpan.style.backgroundColor = '#f1f1f1';
+              responseSpan.style.padding = '5px 10px';
+              responseSpan.style.borderRadius = '10px';
+              responseSpan.style.display = 'inline-block';
+              responseSpan.style.maxWidth = '80%';
+              responseSpan.style.wordWrap = 'break-word';
+              
+              // Set HTML content safely
+              responseSpan.innerHTML = data.reply;
+              
+              // Add click event listeners to all links
+              responseContainer.appendChild(responseSpan);
+              chatContent.appendChild(responseContainer);
+              
+              // Add click handlers to all links
+              const links = responseSpan.querySelectorAll('a');
+              links.forEach(link => {
+                link.style.color = '#007bff';
+                link.style.textDecoration = 'underline';
+                link.addEventListener('click', function(event) {
+                  event.preventDefault();
+                  window.location.href = this.getAttribute('href');
+                });
+              });
+            }
+            chatContent.scrollTop = chatContent.scrollHeight;
+          })
+          .catch((error) => {
+            // Remove typing indicator
+            document.getElementById(typingIndicatorId).remove();
+            
+            console.error('Error:', error);
+            chatContent.innerHTML += `<div style='text-align: left;'><span style='background-color: #f1f1f1; padding: 5px 10px; border-radius: 10px; color: red; display: inline-block; max-width: 80%; word-wrap: break-word;'>Error: Unable to connect</span></div>`;
+            chatContent.scrollTop = chatContent.scrollHeight;
+          });
+      }
+
+      sendButton.addEventListener("click", sendMessage);
+      chatInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+    })();
+  </script>
   </body>
 </html>
