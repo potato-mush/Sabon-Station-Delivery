@@ -16,7 +16,7 @@
                 </div>
                 <div class="form-group">
                     <b><label for="address1">Address Line 2:</label></b>
-                    <input class="form-control" id="address1" name="address1" placeholder="near st, Surat, Gujarat" type="text">
+                    <input class="form-control" id="address1" name="address1" placeholder="near st, Brgy., City" type="text">
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6 mb-0">
@@ -30,7 +30,7 @@
                     </div>
                     <div class="form-group col-md-6 mb-0">
                         <b><label for="zipcode">Zip Code:</label></b>
-                        <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="xxxxxx" required pattern="[0-9]{6}" maxlength="6">                    
+                        <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="xxxx" required pattern="[0-9]{4}" maxlength="6">                    
                     </div>
                 </div>
                 <div class="form-group">

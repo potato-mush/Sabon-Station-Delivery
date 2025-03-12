@@ -11,8 +11,15 @@
     <title>Cart</title>
     <link rel = "icon" href ="img/logo.jpg" type = "image/x-icon">
     <style>
-    #cont{
-        min-height : 626px;
+    html, body {
+        height: 100%;
+    }
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+    #cont {
+        flex: 1;
     }
     </style>
 </head>
@@ -25,9 +32,6 @@
     
     <div class="container" id="cont">
         <div class="row">
-            <div class="alert alert-info mb-0" style="width: -webkit-fill-available;">
-              <strong>Info!</strong> online payment are currently disabled so please choose cash on delivery.
-            </div>
             <div class="col-lg-12 text-center border rounded bg-light my-3">
                 <h1>My Cart</h1>
             </div>
@@ -135,32 +139,35 @@
                             </li>
                         </ul>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="flexRadioDefault1" checked>
                             <label class="form-check-label" for="flexRadioDefault1">
                                 Cash On Delivery 
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault1" id="flexRadioDefault1" disabled>
-                            <label class="form-check-label" for="flexRadioDefault1">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="flexRadioDefault2" onclick="showGcashModal()">
+                            <label class="form-check-label" for="flexRadioDefault2">
                                 Online Payment 
                             </label>
                         </div><br>
                         <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#checkoutModal">Checkout</button>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <div class="pt-4">
-                        <a class="dark-grey-text d-flex justify-content-between" style="text-decoration: none; color: #050607;" data-toggle="collapse" href="#collapseExample"
-                            aria-expanded="false" aria-controls="collapseExample">
-                            Add a discount code (optional)
-                            <span><i class="fas fa-chevron-down pt-1"></i></span>
-                        </a>
-                        <div class="collapse" id="collapseExample">
-                            <div class="mt-3">
-                                <div class="md-form md-outline mb-0">
-                                    <input type="text" id="discount-code" class="form-control font-weight-light"
-                                    placeholder="Enter discount code">
+                        <!-- GCash Modal -->
+                        <div class="modal fade" id="gcashModal" tabindex="-1" role="dialog" aria-labelledby="gcashModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="gcashModalLabel">GCash Payment</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img src="img/qrCode.jpg" alt="GCash QR Code" class="img-fluid">
+                                        <p>Scan the QR code to complete your payment.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -173,7 +180,7 @@
     <?php 
     }
     else {
-        echo '<div class="container" style="min-height : 610px;">
+        echo '<div class="container" id="cont">
         <div class="alert alert-info my-3">
             <font style="font-size:22px"><center>Before checkout you need to <strong><a class="alert-link" data-toggle="modal" data-target="#loginModal">Login</a></strong></center></font>
         </div></div>';
@@ -223,6 +230,10 @@
             let formId = input.closest('form').id;
             let productId = formId.replace('frm', '');
             updateCart(productId);
+        }
+
+        function showGcashModal() {
+            $('#gcashModal').modal('show');
         }
 
         // Add event listeners to quantity inputs
