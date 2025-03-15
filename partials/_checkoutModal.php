@@ -9,7 +9,9 @@
             </button>
         </div>
         <div class="modal-body">
-            <form action="partials/_manageCart.php" method="post">
+            <form action="partials/_manageCart.php" method="post" id="checkoutForm">
+                <!-- Add hidden input for selected items -->
+                <div id="selectedItemsContainer"></div>
                 <div class="form-group">
                     <b><label for="address">Address:</label></b>
                     <input class="form-control" id="address" name="address" placeholder="1234 Main St" type="text" required minlength="3" maxlength="500">
@@ -39,14 +41,43 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <input type="hidden" name="amount" value="<?php echo $totalPrice ?>">
-                    <button type="submit" name="checkout" class="btn btn-success">Order</button>
+                    <input type="hidden" name="amount" value="0">
+                    <button type="submit" name="checkout" class="btn btn-success" onclick="return validateSelection()">Order</button>
                 </div>
             </form>
         </div>
         </div>
     </div>
 </div>
+
+<script>
+function validateSelection() {
+    let checkboxes = document.getElementsByClassName('itemCheckbox');
+    let selected = false;
+    let selectedItems = [];
+    
+    for(let checkbox of checkboxes) {
+        if(checkbox.checked) {
+            selected = true;
+            selectedItems.push(checkbox.dataset.productId);
+        }
+    }
+    
+    if(!selected) {
+        alert('Please select at least one item to checkout.');
+        return false;
+    }
+
+    // Add selected items to form
+    let container = document.getElementById('selectedItemsContainer');
+    container.innerHTML = ''; // Clear previous
+    selectedItems.forEach(itemId => {
+        container.innerHTML += `<input type="hidden" name="selectedItems[]" value="${itemId}">`;
+    });
+    
+    return true;
+}
+</script>
 
 <?php 
     if($loggedin){

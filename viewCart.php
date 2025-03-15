@@ -40,6 +40,9 @@
                     <table class="table text-center">
                         <thead class="thead-light">
                             <tr>
+                                <th scope="col">
+                                    <input type="checkbox" id="selectAll" onclick="toggleAll()">
+                                </th>
                                 <th scope="col">No.</th>
                                 <th scope="col">Item Name</th>
                                 <th scope="col">Item Price</th>
@@ -81,6 +84,12 @@
                                     $totalPrice = $totalPrice + $total;
 
                                     echo '<tr>
+                                            <td>
+                                                <input type="checkbox" class="itemCheckbox" 
+                                                    data-price="' . $total . '"
+                                                    data-product-id="' . $productId . '" 
+                                                    onclick="updateTotal()">
+                                            </td>
                                             <td>' . $counter . '</td>
                                             <td>' . $productName . '</td>
                                             <td>';
@@ -128,14 +137,14 @@
                     <div class="pt-4 border bg-light rounded p-3">
                         <h5 class="mb-3 text-uppercase font-weight-bold text-center">Order summary</h5>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0 bg-light">Total Price<span>₱ <?php echo $totalPrice ?></span></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0 bg-light">Total Price<span>₱ <span id="selectedTotal">0.00</span></span></li>
                             <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-light">Shipping<span>₱ 0</span></li>
                             <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3 bg-light">
                                 <div>
                                     <strong>The total amount of</strong>
                                     <strong><p class="mb-0">(including Tax & Charge)</p></strong>
                                 </div>
-                                <span><strong>₱ <?php echo $totalPrice ?></strong></span>
+                                <span><strong>₱ <span id="finalTotal">0.00</span></strong></span>
                             </li>
                         </ul>
                         <div class="form-check">
@@ -246,6 +255,37 @@
                 });
             });
         });
+
+        // Add this at the end of your existing script section
+        function toggleAll() {
+            let selectAllCheckbox = document.getElementById('selectAll');
+            let itemCheckboxes = document.getElementsByClassName('itemCheckbox');
+            
+            for(let checkbox of itemCheckboxes) {
+                checkbox.checked = selectAllCheckbox.checked;
+            }
+            updateTotal();
+        }
+
+        function updateTotal() {
+            let total = 0;
+            let checkboxes = document.getElementsByClassName('itemCheckbox');
+            
+            for(let checkbox of checkboxes) {
+                if(checkbox.checked) {
+                    total += parseFloat(checkbox.dataset.price);
+                }
+            }
+            
+            document.getElementById('selectedTotal').textContent = total.toFixed(2);
+            document.getElementById('finalTotal').textContent = total.toFixed(2);
+            
+            // Update hidden amount field in checkout form if it exists
+            let amountInput = document.querySelector('input[name="amount"]');
+            if(amountInput) {
+                amountInput.value = total;
+            }
+        }
     </script>
 </body>
 </html>

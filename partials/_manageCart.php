@@ -66,7 +66,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $phone = $_POST["phone"];
         $zipcode = $_POST["zipcode"];
         $password = $_POST["password"];
+        $selectedItems = isset($_POST["selectedItems"]) ? $_POST["selectedItems"] : [];
         $address = $address1.", ".$address2;
+
+        if(empty($selectedItems)) {
+            echo '<script>
+                    alert("Please select at least one item to checkout.");
+                    window.history.back(1);
+                  </script>';
+            exit();
+        }
         
         $passSql = "SELECT * FROM users WHERE id='$userId'"; 
         $passResult = mysqli_query($conn, $passSql);
@@ -74,17 +83,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $userName = $passRow['username'];
         
         if (password_verify($password, $passRow['password'])) {
-            // Start transaction
             $conn->begin_transaction();
             
             try {
-                // First verify stock availability for all items
+                // Modify cart query to only check selected items
                 $cartSql = "SELECT vc.productId, vc.itemQuantity, p.stock, p.productName 
                            FROM viewcart vc 
                            JOIN products p ON vc.productId = p.productId 
-                           WHERE vc.userId = ?";
+                           WHERE vc.userId = ? AND vc.productId IN (" . implode(',', array_fill(0, count($selectedItems), '?')) . ")";
                 $stmt = $conn->prepare($cartSql);
-                $stmt->bind_param("i", $userId);
+                $types = "i" . str_repeat("i", count($selectedItems));
+                $params = array_merge([$userId], $selectedItems);
+                $stmt->bind_param($types, ...$params);
                 $stmt->execute();
                 $cartResult = $stmt->get_result();
                 
@@ -105,7 +115,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 // Get cart items again for processing
                 $stmt = $conn->prepare($cartSql);
-                $stmt->bind_param("i", $userId);
+                $stmt->bind_param($types, ...$params);
                 $stmt->execute();
                 $cartResult = $stmt->get_result();
                 
@@ -125,10 +135,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt->execute();
                 }
                 
-                // Clear user's cart
-                $deletesql = "DELETE FROM `viewcart` WHERE `userId`= ?";
+                // Only remove selected items from cart
+                $deletesql = "DELETE FROM `viewcart` WHERE `userId`= ? AND productId IN (" . implode(',', array_fill(0, count($selectedItems), '?')) . ")";
                 $stmt = $conn->prepare($deletesql);
-                $stmt->bind_param("i", $userId);
+                $types = "i" . str_repeat("i", count($selectedItems));
+                $params = array_merge([$userId], $selectedItems);
+                $stmt->bind_param($types, ...$params);
                 $stmt->execute();
                 
                 // Commit transaction
