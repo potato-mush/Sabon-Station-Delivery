@@ -228,8 +228,8 @@
                               <br> ' .$contact2. '</p>
                             <div class="round-social light">
                               <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=' .$email. '" class="ml-0 text-decoration-none text-white border border-white rounded-circle" target="_blank"><i class="far fa-envelope"></i></a>
-                              <a href="https://github.com/darshankparmar" class="text-decoration-none text-white border border-white rounded-circle" target="_blank"><i class="fab fa-github"></i></i></a>
-                              <a href="https://youtube.com/" class="text-decoration-none text-white border border-white rounded-circle" target="_blank"><i class="fab fa-youtube"></i></a>
+                              <a href="https://www.facebook.com/people/Sabon-Station-Malasiqui-Pangasinan-Boss-G/100064348591769/" class="text-decoration-none text-white border border-white rounded-circle" target="_blank"><i class="fab fa-facebook"></i></i></a>
+                              <a href="https://maps.app.goo.gl/j7wfqMzVHHtUAjj88" class="text-decoration-none text-white border border-white rounded-circle" target="_blank"><i class="fas fa-map-marker-alt"></i></a>
                             </div>
                           </div>
                         </div>';

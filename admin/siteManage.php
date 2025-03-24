@@ -30,7 +30,7 @@ echo '<div class="container-fluid" style="padding-left: 470px;margin-top:98px">
                 </div>
                 <div class="form-group">
                     <label for="contact" class="control-label">Contact-2(optional)</label>
-                    <input type="tel" class="form-control" id="contact2" name="contact2" value="' .$contact2. '" required>
+                    <input type="tel" class="form-control" id="contact2" name="contact2" value="' .$contact2. '">
                 </div>
                 <div class="form-group">
                     <label for="address" class="control-label">Address</label>

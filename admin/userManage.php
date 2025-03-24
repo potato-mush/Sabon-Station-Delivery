@@ -19,6 +19,7 @@
                             <th>Email</th>
                             <th>Phone No.</th>
                             <th>Type</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -35,6 +36,19 @@
                             $email = $row['email'];
                             $phone = $row['phone'];
                             $userType = $row['userType'];
+                            $lastLogin = isset($row['lastLogin']) ? $row['lastLogin'] : null;
+                            
+                            // Determine user status based on lastLogin
+                            $status = "Inactive";
+                            if ($lastLogin !== null) {
+                                $lastLoginTime = strtotime($lastLogin);
+                                $thirtyDaysAgo = time() - (30 * 24 * 60 * 60); // 30 days in seconds
+                                
+                                if ($lastLoginTime > $thirtyDaysAgo) {
+                                    $status = "Active";
+                                }
+                            }
+                            
                             if ($userType == 0)
                                 $userType = "user";
                             else
@@ -51,19 +65,9 @@
                                     <td>' . $email . '</td>
                                     <td>' . $phone . '</td>
                                     <td>' . $userType . '</td>
+                                    <td>' . $status . '</td>
                                     <td class="text-center">
-                                        <div class="row mx-auto" style="width:112px">
-                                            <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editUser' . $Id . '" type="button">Edit</button>';
-                            if ($Id == 1) {
-                                echo '<button class="btn btn-sm btn-danger" disabled style="margin-left:9px;">Delete</button>';
-                            } else {
-                                echo '<form action="partials/_userManage.php" method="POST">
-                                                        <button name="removeUser" class="btn btn-sm btn-danger" style="margin-left:9px;">Delete</button>
-                                                        <input type="hidden" name="Id" value="' . $Id . '">
-                                                    </form>';
-                            }
-
-                            echo '</div>
+                                        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editUser' . $Id . '" type="button">Edit</button>
                                     </td>
                                 </tr>';
                         }
