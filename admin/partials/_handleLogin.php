@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../dbConnect.php';
+include '_dbconnect.php';
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     $username = $_POST["username"];
